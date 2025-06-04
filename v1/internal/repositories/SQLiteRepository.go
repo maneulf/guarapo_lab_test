@@ -3,6 +3,7 @@ package repositories
 import (
 	"log"
 
+	"github.com/maneulf/guarapo_lab_test/internal/handlers/models"
 	"github.com/maneulf/guarapo_lab_test/internal/handlers/models/req"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -12,40 +13,64 @@ type SQLiteRepository struct {
 	db *gorm.DB
 }
 
-func NewSQLiteRepository() *SQLiteRepository {
+func NewSQLiteRepository(database string) *SQLiteRepository {
 	r := &SQLiteRepository{}
-	r.Connect()
+	r.Connect(database)
 	return r
 }
 
-func (SQLr *SQLiteRepository) Connect() {
+func (SQLr *SQLiteRepository) Connect(database string) {
 	var err error
-	SQLr.db, err = gorm.Open(sqlite.Open("Tasks.db"), &gorm.Config{})
+	SQLr.db, err = gorm.Open(sqlite.Open(database), &gorm.Config{})
 
 	if err != nil {
 		log.Fatalf("Failed to connect to database, Err: %s", err)
 	}
-	SQLr.db.AutoMigrate(&req.Task{})
+	SQLr.db.AutoMigrate(&models.DbTask{})
 
 }
 
 func (SQLr *SQLiteRepository) GetTasks(token string) ([]req.Task, error) {
-	SQLr.db.Where("id = ?")
-	return []req.Task{}, nil
+	var dbTasks []models.DbTask
+	result := SQLr.db.Where("user_token = ?", token).Find(&dbTasks)
 
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var tasks []req.Task
+
+	for _, v := range dbTasks {
+		tasks = append(tasks, v.Task)
+	}
+
+	return tasks, nil
 }
 
 func (SQLr *SQLiteRepository) GetTask(id int, token string) (req.Task, error) {
+	var dbTask models.DbTask
+	result := SQLr.db.Where("id = ? and user_token = ?", id, token).First(&dbTask)
 	var task req.Task
-	result := SQLr.db.Where("id = ?", id).First(&task)
 	if result.Error != nil {
 		return task, result.Error
+	}
+	task = req.Task{
+		ID:        dbTask.ID,
+		Title:     dbTask.Title,
+		Completed: dbTask.Completed,
+		Owner:     dbTask.Owner,
 	}
 	return task, nil
 }
 
 func (SQLr *SQLiteRepository) Save(task req.Task, token string) error {
-	result := SQLr.db.Create(&task)
+
+	dbTask := models.DbTask{
+		Task:      task,
+		UserToken: token,
+	}
+
+	result := SQLr.db.Create(&dbTask)
 
 	if result.Error != nil {
 		return result.Error
@@ -54,9 +79,25 @@ func (SQLr *SQLiteRepository) Save(task req.Task, token string) error {
 }
 
 func (SQLr *SQLiteRepository) Update(task req.Task, id int, token string) error {
+	result := SQLr.db.Model(&models.DbTask{}).Where("id = ? and user_token = ?", id, token).Updates(
+		map[string]interface{}{
+			"id":        task.ID,
+			"title":     task.Title,
+			"completed": task.Completed,
+			"owner":     task.Owner,
+		},
+	)
+
+	if result.Error != nil {
+		return result.Error
+	}
 	return nil
 }
 
 func (SQLr *SQLiteRepository) Delete(id int, token string) error {
+	result := SQLr.db.Delete(&models.DbTask{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
 	return nil
 }

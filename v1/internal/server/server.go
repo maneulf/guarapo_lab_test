@@ -43,9 +43,10 @@ func New() *Server {
 		Usernames: map[string]string{},
 	}
 
+	//Dependencies injection
 	var tasksRepository ports.TasksRepository
 	if serverConf.PERSISTENCE_TYPE == "sqlite" {
-		tasksRepository = repositories.NewSQLiteRepository()
+		tasksRepository = repositories.NewSQLiteRepository("tasks.db")
 		log.Println("Executing with sqlite persistence")
 	} else if serverConf.PERSISTENCE_TYPE == "inmemory" {
 		tasksRepository = repositories.NewMemTasksRepository()
@@ -54,11 +55,6 @@ func New() *Server {
 		log.Println("persistence type is unknown, aborting...")
 		return nil
 	}
-
-	//taskSQLiteRepository := repositories.NewSQLiteRepository()
-	//taskMemRepository := repositories.NewMemTasksRepository()
-	//tasksService := services.NewTasksService(taskMemRepository)
-	//taskSQLiteRepository.Connect()
 
 	tasksService := services.NewTasksService(tasksRepository)
 	handlers := handlers.New(base, tasksService)
