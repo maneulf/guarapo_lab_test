@@ -24,6 +24,15 @@
 
 ### 🔧 Opción 1: Ejecutar con Go
 
+El proyecto puede ejecutarse con persistencia en memoria o en base de datos sqlite, para seleccionar una
+de estas dos opciones modifique la variable PERSISTENCE_TYPE en el archivo env_local.sh
+
+El servicio cuenta con endpoinds protejidos por https como no protejidos http, para activar los endpoinds protegidos debe generar las claves ssl haciendo uso del scrip ssl-generator.sh
+```bash
+./dev_helper/ssl-generator.sh
+```
+Esto creara las claves en el directorio certs, tenga en cuenta que debe agregar permisos de ejecucion al script
+
 ```bash
 git clone https://github.com/tu-usuario/guarapo_lab_test.git
 cd guarapo_lab_test
@@ -31,8 +40,6 @@ go mod tidy
 source dev_helper/env_local.sh
 go run cmd/server/main.go
 ```
-El proyecto puede ejecutarse con persistencia en memoria o en base de datos sqlite, para seleccionar una
-de estas dos opciones modifique la variable PERSISTENCE_TYPE en el archivo env_local.sh
 
 
 ---
