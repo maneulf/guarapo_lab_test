@@ -10,4 +10,5 @@ services:
       ADDRESS_HTTPS: ":4443"
       READ_TIMEOUT: "5"
       WRITE_TIMEOUT: "5"
-      PERSISTENCE_TYPE: "inmemory"
+      #PERSISTENCE_TYPE: "inmemory"
+      PERSISTENCE_TYPE: "sqlite"

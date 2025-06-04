@@ -36,6 +36,8 @@ func (h *Handlers) Login(ctx *gin.Context) {
 
 	if err != nil {
 		log.Printf("Could not read json body, Err: %s", err)
+		ctx.Status(http.StatusBadRequest)
+		return
 	}
 
 	token := h.generateToken(tokenLenght)
@@ -53,6 +55,8 @@ func (h *Handlers) GetTasks(ctx *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error trying to get tasks, Err: %s", err)
+		ctx.Status(http.StatusNotFound)
+		return
 
 	}
 
@@ -64,7 +68,8 @@ func (h *Handlers) GetTask(ctx *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error trying to get id, Err: %s", err)
-
+		ctx.Status(http.StatusBadRequest)
+		return
 	}
 
 	token := getToken(ctx)
@@ -72,7 +77,8 @@ func (h *Handlers) GetTask(ctx *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error trying to get task, Err: %s", err)
-
+		ctx.Status(http.StatusNotFound)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, task)
@@ -93,9 +99,11 @@ func (h *Handlers) SaveTask(ctx *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error trying to save task, Err: %s", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
 	}
 
-	ctx.Status(http.StatusOK)
+	ctx.Status(http.StatusCreated)
 
 }
 
@@ -113,9 +121,18 @@ func (h *Handlers) UpdateTask(ctx *gin.Context) {
 	taskId, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Printf("Error trying to get id, Err: %s", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "could not read id param"})
+		return
 	}
 
-	h.TasksService.Update(tasksRequest, taskId, token)
+	err = h.TasksService.Update(tasksRequest, taskId, token)
+	if err != nil {
+		log.Printf("Error trying to update data, Err: %s", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+
+	}
+	ctx.Status(http.StatusNoContent)
 
 }
 
@@ -123,9 +140,18 @@ func (h *Handlers) DeleteTask(ctx *gin.Context) {
 	taskId, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Printf("Error trying to get id, Err: %s", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "could not read id param"})
+		return
 	}
 
 	token := getToken(ctx)
-	h.TasksService.Delete(taskId, token)
-	ctx.Status(http.StatusOK)
+
+	err = h.TasksService.Delete(taskId, token)
+	if err != nil {
+		log.Printf("Error trying to delete data, Err: %s", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+
+	}
+	ctx.Status(http.StatusNoContent)
 }

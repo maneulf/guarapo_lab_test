@@ -22,7 +22,7 @@ func (ts *TasksService) GetTasks(token string) ([]req.Task, error) {
 
 	if err != nil {
 		log.Printf("Error trying to get tasks, Err: %s", err)
-		return []req.Task{}, nil
+		return []req.Task{}, err
 	}
 
 	return tasks, nil
@@ -57,6 +57,7 @@ func (ts *TasksService) Update(task req.Task, id int, token string) error {
 	err := ts.tasksRepository.Update(task, id, token)
 	if err != nil {
 		log.Printf("Error tryinig to update task, Err: %s", err)
+		return err
 	}
 	return nil
 

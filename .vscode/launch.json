@@ -16,7 +16,9 @@
                 "ADDRESS_HTTPS":":4443",
                 "READ_TIMEOUT":"11",
                 "WRITE_TIMEOUT":"11",
-                "PERSISTENCE_TYPE": "sqlite"
+                "PERSISTENCE_TYPE": "sqlite",
+                "PATH_CERT_HTTPS": "../../../v1/certs/cert.pem",
+                "PATH_KEY_HTTPS": "../../../v1/certs/key.pem"
             }
         }
     ]

@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"log"
 
 	"github.com/maneulf/guarapo_lab_test/internal/handlers/models"
@@ -38,6 +39,10 @@ func (SQLr *SQLiteRepository) GetTasks(token string) ([]req.Task, error) {
 		return nil, result.Error
 	}
 
+	if result.RowsAffected == 0 {
+		return nil, errors.New("no data")
+	}
+
 	var tasks []req.Task
 
 	for _, v := range dbTasks {
@@ -51,9 +56,15 @@ func (SQLr *SQLiteRepository) GetTask(id int, token string) (req.Task, error) {
 	var dbTask models.DbTask
 	result := SQLr.db.Where("id = ? and user_token = ?", id, token).First(&dbTask)
 	var task req.Task
+
 	if result.Error != nil {
 		return task, result.Error
 	}
+
+	if result.RowsAffected == 0 {
+		return task, errors.New("no data")
+	}
+
 	task = req.Task{
 		ID:        dbTask.ID,
 		Title:     dbTask.Title,
@@ -91,6 +102,11 @@ func (SQLr *SQLiteRepository) Update(task req.Task, id int, token string) error 
 	if result.Error != nil {
 		return result.Error
 	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("no data updated")
+	}
+
 	return nil
 }
 

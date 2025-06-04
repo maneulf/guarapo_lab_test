@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"log"
 
 	"github.com/maneulf/guarapo_lab_test/internal/handlers/models/req"
@@ -18,6 +19,9 @@ func NewMemTasksRepository() *MemTasksRepository {
 
 func (mt *MemTasksRepository) GetTasks(token string) ([]req.Task, error) {
 	tasks := mt.memRepo[token]
+	if len(tasks) == 0 {
+		return tasks, errors.New("no data found")
+	}
 	return tasks, nil
 }
 
@@ -27,7 +31,7 @@ func (mt *MemTasksRepository) GetTask(id int, token string) (req.Task, error) {
 			return t, nil
 		}
 	}
-	return req.Task{}, nil
+	return req.Task{}, errors.New("no data found")
 }
 
 func (mt *MemTasksRepository) Save(task req.Task, token string) error {
@@ -40,18 +44,20 @@ func (mt *MemTasksRepository) Update(task req.Task, id int, token string) error 
 	for i, t := range mt.memRepo[token] {
 		if t.ID == id {
 			mt.memRepo[token][i] = task
+			return nil
 		}
 	}
-	return nil
+	return errors.New("no data updated")
 }
 
 func (mt *MemTasksRepository) Delete(id int, token string) error {
 	for i, t := range mt.memRepo[token] {
 		if t.ID == id {
 			mt.memRepo[token] = remove(mt.memRepo[token], i)
+			return nil
 		}
 	}
-	return nil
+	return errors.New("no data deleted")
 }
 
 func remove(s []req.Task, i int) []req.Task {
