@@ -116,10 +116,11 @@ func (SQLr *SQLiteRepository) Save(task req.Task, token string) error {
 func (SQLr *SQLiteRepository) Update(task req.Task, id int, token string) error {
 	result := SQLr.db.Model(&models.DbTask{}).Where("id = ? and user_token = ?", id, token).Updates(
 		map[string]interface{}{
-			"id":        task.ID,
-			"title":     task.Title,
-			"completed": task.Completed,
-			"owner":     task.Owner,
+			"id":         task.ID,
+			"title":      task.Title,
+			"completed":  task.Completed,
+			"owner":      task.Owner,
+			"user_token": token,
 		},
 	)
 
