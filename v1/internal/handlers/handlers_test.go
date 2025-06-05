@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	apserver "github.com/maneulf/guarapo_lab_test/internal/server"
@@ -11,6 +12,7 @@ import (
 
 func TestLogin(t *testing.T) {
 	jsonData := []byte(`{"username": "ana"}`)
+	os.Setenv("PERSISTENCE_TYPE", "inmemory")
 	s := apserver.New()
 	req, _ := http.NewRequest("POST", "/api/v1/login", bytes.NewBuffer(jsonData))
 
