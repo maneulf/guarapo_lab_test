@@ -3,6 +3,7 @@ package repositories
 import (
 	"errors"
 	"log"
+	"strconv"
 
 	"github.com/maneulf/guarapo_lab_test/internal/handlers/models"
 	"github.com/maneulf/guarapo_lab_test/internal/handlers/models/req"
@@ -47,7 +48,18 @@ func (SQLr *SQLiteRepository) GetTasks(token string) ([]req.Task, error) {
 	var tasks []req.Task
 
 	for _, v := range dbTasks {
-		tasks = append(tasks, v.Task)
+		i, error := strconv.Atoi(v.ID)
+
+		if error != nil {
+			return tasks, errors.New("unable to convert id to int")
+		}
+		tasks = append(tasks, req.Task{
+			ID:        i,
+			Title:     v.Title,
+			Completed: v.Completed,
+			Owner:     v.Owner,
+		})
+
 	}
 
 	return tasks, nil
@@ -66,8 +78,15 @@ func (SQLr *SQLiteRepository) GetTask(id int, token string) (req.Task, error) {
 		return task, errors.New("no data")
 	}
 
+	i, err := strconv.Atoi(dbTask.ID)
+
+	if err != nil {
+		return task, errors.New("unable to convert task id")
+
+	}
+
 	task = req.Task{
-		ID:        dbTask.ID,
+		ID:        i,
 		Title:     dbTask.Title,
 		Completed: dbTask.Completed,
 		Owner:     dbTask.Owner,
@@ -77,8 +96,12 @@ func (SQLr *SQLiteRepository) GetTask(id int, token string) (req.Task, error) {
 
 func (SQLr *SQLiteRepository) Save(task req.Task, token string) error {
 
+	str := strconv.Itoa(task.ID)
 	dbTask := models.DbTask{
-		Task:      task,
+		ID:        str,
+		Title:     task.Title,
+		Completed: task.Completed,
+		Owner:     task.Owner,
 		UserToken: token,
 	}
 
