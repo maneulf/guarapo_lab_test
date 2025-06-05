@@ -27,6 +27,7 @@ func (SQLr *SQLiteRepository) Connect(database string) {
 	if err != nil {
 		log.Fatalf("Failed to connect to database, Err: %s", err)
 	}
+	SQLr.db.Migrator().DropTable(&models.DbTask{})
 	SQLr.db.AutoMigrate(&models.DbTask{})
 
 }

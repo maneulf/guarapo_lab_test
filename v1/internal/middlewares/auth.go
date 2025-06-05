@@ -23,8 +23,18 @@ func New(base *handlers.Base) *AuthMiddleware {
 
 func (m *AuthMiddleware) Auth(c *gin.Context) {
 
-	token := c.GetHeader("Authorization")[tokenSplit:]
+	token := c.GetHeader("Authorization")
 
+	if len(token) <= 7 {
+		log.Println("Invalid token")
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status": "Unauthorized",
+		})
+		c.Abort()
+		return
+	}
+
+	token = token[tokenSplit:]
 	_, ok := m.Usernames[token]
 
 	if !ok {
