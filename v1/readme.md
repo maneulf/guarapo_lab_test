@@ -29,7 +29,7 @@ de estas dos opciones modifique la variable PERSISTENCE_TYPE en el archivo env_l
 
 El servicio cuenta con endpoinds protejidos por https como no protejidos http, para activar los endpoinds protegidos debe generar las claves ssl haciendo uso del scrip ssl-generator.sh
 ```bash
-./dev_helper/ssl-generator.sh
+cd ./dev_helper/ && ./ssl-generator.sh && cd ..
 ```
 Esto creara las claves en el directorio certs, tenga en cuenta que debe agregar permisos de ejecucion al script
 

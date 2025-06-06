@@ -13,6 +13,7 @@ import (
 func TestLogin(t *testing.T) {
 	jsonData := []byte(`{"username": "ana"}`)
 	os.Setenv("PERSISTENCE_TYPE", "inmemory")
+	//os.Setenv("PERSISTENCE_TYPE", "sqlite")
 	s := apserver.New()
 	req, _ := http.NewRequest("POST", "/api/v1/login", bytes.NewBuffer(jsonData))
 
