@@ -31,7 +31,7 @@ El servicio cuenta con endpoinds protejidos por https como no protejidos http, p
 ```bash
 cd ./dev_helper/ && ./ssl-generator.sh && cd ..
 ```
-Esto creara las claves en el directorio certs, tenga en cuenta que debe agregar permisos de ejecucion al script
+Esto creara las claves en el directorio certs, tenga en cuenta que debe agregar permisos de ejecucion al script. Si desea correr el servicio sin enpoinds https comente las variables PATH_CERT_HTTPS y PATH_KEY_HTTPS en el archivo dev_helper/env_local.sh
 
 ```bash
 git clone https://github.com/tu-usuario/guarapo_lab_test.git
