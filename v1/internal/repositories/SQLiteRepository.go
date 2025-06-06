@@ -136,7 +136,8 @@ func (SQLr *SQLiteRepository) Update(task req.Task, id int, token string) error 
 }
 
 func (SQLr *SQLiteRepository) Delete(id int, token string) error {
-	result := SQLr.db.Delete(&models.DbTask{}, id)
+	//result := SQLr.db.Delete(&models.DbTask{}, id)
+	result := SQLr.db.Where("id = ? and user_token = ?", id, token).Delete(&models.DbTask{})
 	if result.Error != nil {
 		return result.Error
 	}
