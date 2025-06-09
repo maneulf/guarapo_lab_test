@@ -35,7 +35,7 @@ Esto creara las claves en el directorio certs, tenga en cuenta que debe agregar 
 
 ```bash
 git clone https://github.com/tu-usuario/guarapo_lab_test.git
-cd guarapo_lab_test
+cd guarapo_lab_test/v1
 go mod tidy
 source dev_helper/env_local.sh
 go run cmd/server/main.go
