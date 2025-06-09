@@ -28,7 +28,7 @@ El proyecto puede ejecutarse con persistencia en memoria o en base de datos sqli
 
 
 ```bash
-git clone https://github.com/tu-usuario/guarapo_lab_test.git
+git clone https://github.com/maneulf/guarapo_lab_test.git
 cd guarapo_lab_test/v1
 go mod tidy
 source dev_helper/env_local.sh
